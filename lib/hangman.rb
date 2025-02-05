@@ -18,6 +18,9 @@ def get_progress(word, guessed_letters)
   fullword = ""
   word.chars.each {|char| 
   guessed_letters.has_key?(char) ? fullword << char : fullword << '_' }
-  fullworld
+  fullword
 end
 
+def check_guess(word)
+  word.count("_") <= 0
+end
