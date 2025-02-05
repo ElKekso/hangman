@@ -1,2 +1,9 @@
+def pick_word
+  words = File.readlines('google-10000-english-no-swears.txt')
+  words.sample
+end
 
-File = File.new('google-10000-english-no-swears.txt')
+puts pick_word
+
+
+
