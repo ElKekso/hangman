@@ -14,19 +14,10 @@ def get_guess
   end
 end
 
-def show_progress(word, guessed_letters)
+def get_progress(word, guessed_letters)
+  fullword = ""
   word.chars.each {|char| 
-  if guessed_letters.has_key?(char)
-    print char
-  else
-    print '_'
-  end
-  }
-  return
+  guessed_letters.has_key?(char) ? fullword << char : fullword << '_' }
+  fullworld
 end
-
-puts show_progress(word, guessed_letters)
-
-
-
 
