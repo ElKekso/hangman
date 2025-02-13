@@ -1,3 +1,5 @@
+require 'json'
+
 def pick_word
   words = File.readlines('google-10000-english-no-swears.txt')
   word = words.sample[0..-2]
@@ -60,23 +62,67 @@ def get_progress(word, guessed_letters)
 end
 
 def game_loop(num_guesses, word, guessed_letters)
-  puts word
-  puts word.chars
   puts gen_progress(word, guessed_letters)
-  for i in 0..num_guesses
-    return "Congrats you win!" if check_progress(get_progress(word, guessed_letters))
+  for i in 0..(num_guesses-1)
+    puts "Congrats you win!" if check_progress(get_progress(word, guessed_letters))
+    puts "You have #{-(i-4)} guesses left!"
+    puts "Do you want to save the game?"
+    if get_yn
+      Dir.mkdir('saves') unless Dir.exist?('saves')
+      puts "please input a save name"
+      filename = "saves/#{gets.chomp}.json"
+      temp_hash = {
+        "word": word,
+        "guessed_letters": guessed_letters,
+        "num_guesses": i - 1
+      }
+      File.open(filename, 'w') do |file|
+        file.write(temp_hash.to_json)
+      end
+      return 
+    end
+
   end
   puts "The word was #{word}"
-  return "You loose womp womp"
+  puts "You loose womp womp"
+  return
 end
 
-def play_hangman
-  game_loop(5, pick_word, Hash.new)
+def get_yn
+  print " (y = yes) (n = no)"
+  loop do 
+    input = gets.chomp
+    if input == 'y'
+      return true
+    elsif input == 'n'
+      return false
+    else
+      puts "Please try again"
+    end
+  end
 end
-
-
 
 puts "Lets play Hangman :D"
 
-puts play_hangman
+guessed_letters = Hash.new
+word = pick_word
+num_guesses = 5
+
+puts "Do you want to load a game?"
+if get_yn
+  puts "Enter the name of the save file you want to continue"
+  loop do
+    filename = gets.chomp
+    next unless File.exist?("saves/#{filename}.json")
+    file = open("saves/#{filename}.json")
+    game_save = JSON.parse(file.read)
+    guessed_letters = game_save["guessed_letters"]
+    word = game_save["word"]
+    num_guesses = game_save["num_guesses"]
+  end
+end
+
+
+
+game_loop(num_guesses, word, guessed_letters)
 
