@@ -63,9 +63,12 @@ end
 
 def game_loop(num_guesses, word, guessed_letters)
   puts gen_progress(word, guessed_letters)
-  for i in 0..(num_guesses-1)
-    puts "Congrats you win!" if check_progress(get_progress(word, guessed_letters))
-    puts "You have #{-(i-4)} guesses left!"
+  num_guesses.downto(1) do |i|
+    if check_progress(get_progress(word, guessed_letters))
+      puts "Congrats you win!"
+      return
+    end
+    puts "You have #{i - 1} guesses left!"
     puts "Do you want to save the game?"
     if get_yn
       Dir.mkdir('saves') unless Dir.exist?('saves')
@@ -89,7 +92,7 @@ def game_loop(num_guesses, word, guessed_letters)
 end
 
 def get_yn
-  print " (y = yes) (n = no)"
+  print " (y = yes) (n = no)\n"
   loop do 
     input = gets.chomp
     if input == 'y'
@@ -119,6 +122,7 @@ if get_yn
     guessed_letters = game_save["guessed_letters"]
     word = game_save["word"]
     num_guesses = game_save["num_guesses"]
+    break
   end
 end
 
